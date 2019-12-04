@@ -1,0 +1,172 @@
+<div>
+  <div *ngIf="config.query" class="query">
+    <div *ngIf="config.query.field" style="margin-top: 12px; ">
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item *ngFor="let field of config.query.field" [ngClass]="field.class">
+          <span *ngIf="field.type == 'btn'; else elseBlock">
+            <!-- <button nz-button nzType="primary" [disabled]="field.disabled"
+              (click)="formBtnClick(field)">{{ field.name }}</button> -->
+            <button nz-button [nzType]="field.nzType || 'primary'" [disabled]="field.disabled" (click)="formBtnClick(field)">
+              <i nz-icon [nzType]="field.icon" nzTheme="outline" *ngIf="field.icon"></i>
+              {{ field.name }}
+            </button>
+          </span>
+          <ng-template #elseBlock>
+            <nz-form-label [nzFor]="field.id">{{ field.field }}</nz-form-label>
+            <nz-form-control *ngIf="field.type == 'text'">
+              <nz-input-group [nzPrefixIcon]="field.icon ? field.icon : ''">
+                <input [name]="field.id" nz-input [placeholder]="field.placeholder" [(ngModel)]="queryData[field.id]" />
+              </nz-input-group>
+            </nz-form-control>
+            <nz-form-control *ngIf="field.type == 'select'">
+              <nz-select style="width: 175px;" [name]="field.id" (ngModelChange)="field.change?field.change($event):null" [(ngModel)]="queryData[field.id]" [nzSize]="field.size || 'default'">
+                <nz-option *ngFor="let option of field.option" [nzLabel]="option.value" [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <nz-form-control *ngIf="field.type == 'Searchselect'">
+              <nz-select style="width: 175px;" nzShowSearch [name]="field.id" [(ngModel)]="queryData[field.id]" [nzSize]="field.size || 'default'">
+                <nz-option *ngFor="let option of field.option" [nzLabel]="option.value" [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <nz-form-control *ngIf="field.type == 'date'">
+              <nz-input-group [nzPrefixIcon]="field.icon ? field.icon : ''">
+                <nz-date-picker [(ngModel)]="queryData[field.id]" [name]="field.id" [nzFormat]="field.format">
+                </nz-date-picker>
+              </nz-input-group>
+            </nz-form-control>
+            <nz-form-control *ngIf="field.type == 'datemonth'">
+              <nz-input-group [nzPrefixIcon]="field.icon ? field.icon : ''">
+                <nz-month-picker [(ngModel)]="queryData[field.id]" [name]="field.id" [nzFormat]="field.format"></nz-month-picker>
+              </nz-input-group>
+            </nz-form-control>
+            <nz-form-control *ngIf="field.type == 'range'">
+              <nz-input-group [nzPrefixIcon]="field.icon ? field.icon : ''">
+                <nz-range-picker [nzStyle]="{'width': '210px'}" class="range-picker" [(ngModel)]="queryData[field.id]" [name]="field.id" [nzFormat]="field.format">
+                </nz-range-picker>
+              </nz-input-group>
+            </nz-form-control>
+          </ng-template>
+        </nz-form-item>
+      </form>
+    </div>
+    <div *ngIf="config.query.btns" style="margin: 12px 0; ">
+      <form nz-form [nzLayout]="'inline'">
+        <nz-form-item *ngFor="let btn of config.query.btns" [ngClass]="btn.class">
+          <nz-form-control>
+            <!-- <button nz-button nzType="primary" [disabled]="btn.disabled"
+              (click)="formBtnClick(btn)">{{ btn.name }}</button> -->
+            <button nz-button [nzType]="btn.nzType || 'primary'" [disabled]="btn.disabled" (click)="formBtnClick(btn)">
+              <i nz-icon [nzType]="btn.icon" nzTheme="outline" *ngIf="btn.icon"></i>
+              {{ btn.name }}
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+  <div class="table">
+    <nz-table #basicTable [nzFrontPagination]="false" [nzData]="data.records || data.content"
+      [nzShowPagination]="false"
+      [nzBordered]="config.border"
+      [nzLoading]="config.loading"
+      [nzScroll]="{x: width, y: config.tableHeight }">
+      <thead>
+        <tr>
+          <th
+          *ngFor="let theadTh of config.column"
+          [nzLeft]="theadTh.left"
+          [nzRight]="theadTh.right"
+          [ngStyle]="{'width': theadTh.width}">
+            <span *ngIf="theadTh.type == 'checkbox'" nz-checkbox name="checked" [(ngModel)]="isAllchecked"
+              [nzIndeterminate]="isIndeterminate" (ngModelChange)="checkAll($event)"></span>
+            <span *ngIf="theadTh.type != 'checkbox'">{{theadTh.field}}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data; let i = index;">
+          <td
+            *ngFor="let theadTd of config.column"
+            [nzLeft]="theadTd.left"
+            [nzRight]="theadTd.right"
+            [ngStyle]="{'width': theadTd.width, 'color': getColor(theadTd, data), 'cursor': getCursor(theadTd, data), 'vertical-align': 'middle'}">
+            <span *ngIf="theadTd.type == 'checkbox'" nz-checkbox [name]="'checked' + i" [(ngModel)]="data.checked"
+              [nzDisabled]="data.disabled"></span>
+            <span *ngIf="theadTd.type == 'seed'">{{i + 1}}</span>
+            <span *ngIf="theadTd.type == 'text'"  [innerHTML]='getHtml(theadTd, data, theadTd.id)'></span>
+            <span *ngIf="theadTd.type == 'edit-data'">
+              <textarea
+                [ngStyle]="{'width': getWidth_textarea(theadTd.width)}"
+                *ngIf="isEdit(data)" rows="4" nz-input [(ngModel)]="data[theadTd.id]"
+                (change)="changeValue($event, theadTd, data, theadTd.id)"></textarea>
+              <span *ngIf="!isEdit(data)" [innerHTML]='getHtml(theadTd, data, theadTd.id)'></span>
+            </span>
+            <span *ngIf="theadTd.type == 'select'"
+              (click)="selectClick(theadTd, data, data[theadTd.id])">{{getSelectVal(theadTd.option, data[theadTd.id])}}</span>
+            <span *ngIf="theadTd.type == 'date'">{{dateForMat(data[theadTd.id], theadTd.forMat)}}</span>
+            <span *ngIf="theadTd.type == 'file'">
+              <span *ngFor="let fileSrc of getFile(data[theadTd.id]); let ind = index;" (click)="showFile(fileSrc)"
+                class="fileImg">附件{{ind + 1}}</span>
+            </span>
+            <span *ngIf="theadTd.type == 'rlist'">
+              <span *ngFor="let fileSrc of getRlist(data[theadTd.id],theadTd.list); let ind = index;"
+                class="rlistItem e2e-trusted-url" [innerHTML]="fileSrc">
+              </span>
+            </span>
+            <span class="link" *ngIf="theadTd.type == 'link'" [innerHTML]='getHtml(theadTd, data, theadTd.id)' (click)="theadTd.click && theadTd.click(data)"></span>
+            <span *ngIf="theadTd.type == 'btnList'">
+              <span *ngFor="let btn of theadTd.btnList">
+                <button *ngIf="isShowBtn(btn, data)" style="margin-right: 12px" (click)="btn.click(data)" nz-button
+                  nzType="link"  [innerHTML]='theadTd.render? theadTd.render(theadTd):btn.name'>{{theadTd.render ? theadTd.render(theadTd) :btn.name}}</button>
+              </span>
+            </span>
+            <span *ngIf="theadTd.type == 'templte'">
+               <span [ngStyle]="{'color':'#000'}" [innerHtml]="data[theadTd.id] || '-'"></span>
+            </span>
+            <span *ngIf="theadTd.type == 'dfbtnList'">
+              <button style="margin-right: 12px" [disabled]='data.disabled1===true?true:false' (click)="theadTd.btnList[0].click(data)" nz-button
+                nzType="link">迁入</button>
+              <button style="margin-right: 12px" [disabled]='data.disabled2===true?true:false' (click)="theadTd.btnList[1].click(data)" nz-button
+                nzType="link">迁出</button>
+                <button style="margin-right: 12px" [disabled]='data.disabled2===true?true:false'
+                  (click)="theadTd.btnList[2].click(data)" nz-button nzType="link">迁至</button>
+            </span>
+            <div *ngIf="theadTd.type == 'checkTime'">
+              <div class="timeData">
+                <div class="timeStyle"  *ngFor="let timeData of data[theadTd.id]">
+                  <div [ngClass]="timeData.usedNum?'active':'timeChild'" class="timeChild">{{timeData.examHour}}</div>
+                  <div class="popleNum">已预约{{timeData.usedNum}}人</div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    
+    <ng-template #totalTemplate let-total>共<font style="font-size: 16px; padding: 0 4px; font-weight: 600;">{{data.total || data.totalElements}}</font>条</ng-template>
+    <div *ngIf="showPager()" class="pager-box" [ngStyle]="{'margin-top': marginTop}">
+      <nz-pagination 
+      [nzPageIndex]="data.current || data.number" 
+      [nzPageSize]="pageSize" 
+      [nzTotal]="data.total || data.totalElements" 
+      [nzShowTotal]="totalTemplate" 
+      [nzShowSizeChanger]="config.showSizeChanger"
+      (nzPageSizeChange)="pageSizeChange($event)"
+      (nzPageIndexChange)="changePage($event)"></nz-pagination>
+      <span *ngIf="data.totalPages > 5 || data.pages > 5">
+        <span style="margin-left: 10px;">
+          跳至<input type="text" style="width: 50px; margin: 0 10px; height: 32px !important; text-align: center;" (keyup)="keyupGoPage($event)" (input)="inputChange($event)" nz-input [(ngModel)]="inputValue"/>页
+        </span>
+        <button nz-button nzType="default" style="height: 32px; margin-left: 10px;" (click)="clickGopage()">跳转</button>
+      </span>
+    </div>
+  </div>
+</div>
+<div *ngIf="showImg" class="show-img-box" (click)="showImg = !showImg">
+  <div class="img-show">
+    <img [src]="imgSrc" alt="">
+  </div>
+</div>

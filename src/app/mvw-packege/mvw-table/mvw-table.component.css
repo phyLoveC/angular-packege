@@ -1,0 +1,96 @@
+.query {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.table {
+  padding-left: 12px;
+  padding-right: 12px;
+  margin: 0 !important;
+}
+::ng-deep .ant-table-pagination {
+  text-align: center;
+  float: none !important;
+}
+.show-img-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 999999999;
+  overflow-y: auto;
+}
+.img-show {
+  width: 700px;
+  margin: 60px auto;
+}
+.img-show img {
+  width: 100%;
+}
+.fileImg {
+  cursor: pointer;
+  color: blue;
+}
+.fileImg:hover {
+  text-decoration: underline;
+}
+.timeData {
+  display: flex;
+  flex-wrap: wrap;
+}
+.timeStyle {
+  flex:33.33%;
+}
+.timeChild {
+  /* padding: 1px 10px; */
+  border: 1px solid #0079FE;
+  border-radius: 15px;
+  color: #0079FE;
+}
+.active {
+  /* padding: 1px 10px; */
+  border: 1px solid #0079FE;
+  border-radius: 15px;
+  color: #fff;
+  background: #0079FE;
+}
+.popleNum:hover {
+  cursor: pointer;
+}
+.rlistItem{
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  display: block;
+  line-height: 24px;
+}
+.rlistItem:last-child{
+  border: none;
+}
+.pager-box {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.query .ant-input-group .ant-input {
+  border-radius: 4px;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.link {
+  color: #1890ff;
+  cursor: pointer;
+  display: inline-block;
+}
+.link:hover {
+  color: #004dff;
+  transform: scale(1.2);
+  -ms-transform: scale(1.2); 	/* IE 9 */
+  -moz-transform: scale(1.2); 	/* Firefox */
+  -webkit-transform: scale(1.2); /* Safari 和 Chrome */
+  -o-transform: scale(1.2); 	/* Opera */
+}
